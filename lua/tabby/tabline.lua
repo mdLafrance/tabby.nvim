@@ -64,6 +64,14 @@ local format_buffer_tab = function(bufnr, is_active)
     return bg .. "" .. fg .. " " .. icon .. filename .. " " .. bg .. ""
 end
 
+---@param tab_group TabGroup The tab group that was clicked on
+---@param cell_x number The X coordinate of the selected cell.
+---@param cell_y number The Y coordinate of the selected cell.
+---@return number|nil bufnr The buffer number of the selected tab, or nil if no valid tab was selected.
+local get_clicked_tab = function(tab_group, cell_x, cell_y)
+
+end
+
 -- Exports
 local M = {}
 

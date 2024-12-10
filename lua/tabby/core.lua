@@ -54,9 +54,14 @@ local set_current_tab = function(window, idx)
         tabs.index = idx
     end
 
-    -- TODO: Change buffer line
+    tabline.redraw_tabline(tabs)
 
-    -- TODO: show/hide buffers
+    local bufnr = tabs.buffers[tabs.index]
+
+    vim.api.nvim_win_set_buf(window, bufnr)
+    vim.api.nvim_exec_autocmds('BufRead', {
+        buffer = bufnr
+    })
 end
 
 --- Adds the given buffer to the tab group associated with the given window.
@@ -72,13 +77,11 @@ local add_buffer_to_tab_group = function(bufnr, window, show)
 
     table.insert(g_tabs[window].buffers, bufnr)
 
-    -- TODO: Update buffer line
+    tabline.redraw_tabline(g_tabs[window])
 
     if show ~= false then
         set_current_tab(window, -1)
     end
-
-    tabline.redraw_tabline(g_tabs[window])
 end
 
 
@@ -131,17 +134,10 @@ end
 -- Exports
 local M = {}
 
-M.new_tab = function()
-    local bufnr = vim.api.nvim_get_current_buf()
-    local window = vim.api.nvim_get_current_win()
-    print("buffer", bufnr, "in window", window)
-    g_tabs[window] = bufnr
-
-    print(vim.inspect(g_tabs))
-end
-
 M.open_file_in_new_tab = open_file_in_new_tab
-
-M.TabGroup = TabGroup
+M.set_current_tab = set_current_tab
+M.get_tabs_for_window = function(window)
+    return g_tabs[window]
+end
 
 return M
