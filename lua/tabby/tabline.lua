@@ -1,6 +1,7 @@
 -- Functionality for creating the visual tab line indicator
 
 local TabGroup = require("tabby.tab_group")
+local log      = require("tabby.log")
 
 local set_highlight_group_from_theme = function()
     local n = vim.api.nvim_get_hl_by_name("Normal", true)
@@ -80,6 +81,7 @@ local M = {}
 --- This function will error if the associated tabline hasn't been created.
 --- @param tab_group TabGroup The tab group to redraw for
 M.redraw_tabline = function(tab_group)
+    log.debug("Drawing tabline for %d (%d tabs)", tab_group.window, #tab_group.buffers)
     local filenames = {}
 
     for idx, buf_id in ipairs(tab_group.buffers) do

@@ -1,6 +1,7 @@
-local buffers = require("tabby.buffers")
-local tabline = require("tabby.tabline")
+local buffers  = require("tabby.buffers")
+local tabline  = require("tabby.tabline")
 local TabGroup = require("tabby.tab_group")
+local log      = require("tabby.log")
 
 -- Mapping from window id to tab group.
 -- Does there exist a tab group on the current window? Display it
@@ -53,6 +54,8 @@ local set_current_tab = function(window, idx)
     else
         tabs.index = idx
     end
+
+    log.debug("Window %d switching to tab %d", window, tabs.index)
 
     tabline.redraw_tabline(tabs)
 
