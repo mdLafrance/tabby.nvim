@@ -5,13 +5,13 @@ local tabline = require("tabby.tabline")
 local TabGroup = require("tabby.tab_group")
 local log = require("tabby.log")
 
+
 --- The global record of all currently managed tab groups.
 ---
 --- Interaction with this object should be done behind an interface.
 ---@type table<number, TabGroup>
 local g_tabs = {}
 
--- Core functionality
 
 ---Returns true if the given window id has an associated tab group.
 ---
@@ -20,13 +20,15 @@ local window_has_tab_group = function(window)
     return g_tabs[window] ~= nil
 end
 
+
 --- Creates a tab group on the given window.
---- NOTE: This tab group is empty. Call add_buffer_to_tab_group to add buffers to it.
+--- NOTE: This tab group will be empty. Call add_buffer_to_tab_group to add buffers to it.
 ---
 ---@param window number The numerical id of the window to tabify
 local create_tab_group = function(window)
     g_tabs[window] = { window = window, buffers = {}, index = 0 }
 end
+
 
 --- Set the current tab of the given window to the tab at the given index.
 ---
@@ -63,6 +65,7 @@ local set_current_tab = function(window, idx)
     })
 end
 
+
 --- Adds the given buffer to the tab group associated with the given window.
 ---
 --- This function will error if the given window has no associated tab group.
@@ -84,6 +87,7 @@ local add_buffer_to_tab_group = function(bufnr, window, show)
         set_current_tab(window, -1)
     end
 end
+
 
 --- Opens a telescope window to pick a file to open in a new tab.
 --- Once the user has selected a file, the given callback function is invoked with the full file path.
@@ -115,6 +119,7 @@ local telescope_pick_file = function(callback)
     })
 end
 
+
 --- Converts the given window into a tab group, with the current buffer is added as the first tab.
 ---
 --- This function will error if the given window has no associated tab group.
@@ -139,6 +144,7 @@ local convert_to_tab_group = function(window)
     add_buffer_to_tab_group(buf, window, true)
 end
 
+
 --- Change the tab of the given tab group by the given offset.
 ---
 --- This function will error if the given window has no associated tab group.
@@ -162,12 +168,66 @@ local change_tab_offset = function(window, offset)
     set_current_tab(window, next_tab)
 end
 
+
+--- Close the tab on the given tab group at the given index.
+--- @param window number|nil The window id of a window with an associated tab group. Will use the current window if nil.
+--- @param tab number|nil The tab to close. Will use the current tab if nil.
+local close_tab = function(window, tab)
+    -- Infer window if not provided
+    if window == nil then
+        window = vim.api.nvim_get_current_win()
+    end
+
+    local tabs = g_tabs[window]
+
+    if tabs == nil then
+        error("Cannot close tab on window with no tab group")
+        return
+    end
+
+    -- Infer tab if not provided
+    if tab == nil then
+        tab = tabs.index
+    end
+
+    if tab < 1 or tab > #tabs.buffers then
+        error("Cannot close tab with index %d (index doesnt exist)", tab)
+        return
+    end
+
+    log.debug("Closing tab %d", tab)
+    table.remove(tabs.buffers, tab)
+
+    -- Last tab - close the whole window
+    if #tabs.buffers == 0 then
+        log.debug("No more tabs for tab group, closing window")
+        g_tabs[window] = nil
+
+        -- This is a quirk with what i THINK is a bug in nvim
+        -- The tabline is not properly reset when you immediately open a new window to the same buffer.
+        -- winbar is supposed to be window local, but i think there's something else going on.
+        -- Manually clearning the tabline for the window BEFORE you close it seems to dodge the issue.
+        tabline.clear_tabline_for_window(window)
+
+        vim.api.nvim_win_close(window, true)
+        return
+    end
+
+    if tab > 1 then
+        tabs.index = tab - 1
+    end
+
+    set_current_tab(window, tabs.index)
+end
+
+
 -- Exports --
 local M = {}
 
 M.set_current_tab = set_current_tab
 M.convert_to_tab_group = convert_to_tab_group
 M.change_tab_offset = change_tab_offset
+M.close_tab = close_tab
 
 --- Opens a telescope picker to browse for a file to open as a new tab.
 ---
@@ -204,62 +264,31 @@ M.remove_tab_group = function(window)
     end
 end
 
-M.close_tab = function(window, tab)
-    -- Infer window if not provided
-    if window == nil then
-        window = vim.api.nvim_get_current_win()
-    end
-
-    local tabs = g_tabs[window]
-
-    if tabs == nil then
-        error("Cannot close tab on window with no tab group")
-        return
-    end
-
-    -- Infer tab if not provided
-    if tab == nil then
-        tab = tabs.index
-    end
-
-    if tab < 1 or tab > #tabs.buffers then
-        error("Cannot close tab with index %d (index doesnt exist)", tab)
-        return
-    end
-
-    log.debug("Closing tab %d", tab)
-    table.remove(tabs.buffers, tab)
-
-    -- Last tab - close the whole window
-    if #tabs.buffers == 0 then
-        log.debug("No more tabs for tab group, closing window")
-        g_tabs[window] = nil
-
-        -- This is a quirk with what i THINK is a bug in nvim
-        -- The tabline is not properly reset when you immediately open a new window to the same buffer.
-        -- winbar is supposed to be window local, but i think there's something else going on.
-        -- Manually clearning the tabline for THIS window before you close it seems to dodge the issue.
-        tabline.clear_tabline_for_window(window)
-
-        vim.api.nvim_win_close(window, true)
-        return
-    end
-
-    if tab > 1 then
-        tabs.index = tab - 1
-    end
-
-    set_current_tab(window, tabs.index)
-end
-
 --- Gets the tab group associated with the given window.
 ---
 --- @param window number The window id to get the tab group for.
+--- @return TabGroup tabs
 M.get_tabs_for_window = function(window)
     return g_tabs[window]
 end
 
+
 M.register_tab_callbacks = function()
+    vim.keymap.set({ 'n', 'i' }, '<LeftRelease>', function()
+        local mp = vim.fn.getmousepos()
+
+        local x = mp.winrow
+        local y = mp.wincol
+
+        local tabs = g_tabs[mp.winid]
+
+        if x == 1 and tabs ~= nil then
+            local tab = tabline.get_clicked_tab(tabs, y)
+
+            set_current_tab(mp.winid, tab)
+        end
+    end)
+
     -- vim.api.nvim_create_autocmd("BufDelete", {
     --     callback = function()
     --         log.notify_info("Returning false..")
@@ -283,6 +312,7 @@ end
 
 -- Debug utils
 
+--- Utility function that prints information about currently active tab groups
 M.debug_print_tabs = function()
     local num_groups = 0
 

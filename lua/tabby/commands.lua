@@ -7,6 +7,15 @@ local commands = {
 
     convert_to_tab_group = core.convert_to_tab_group,
 
+    set_tab = function(idx)
+        if type(idx) ~= "number" then
+            error("Cannot switch to tab given by non-number value: " .. idx)
+            return
+        end
+
+        core.set_current_tab(nil, idx)
+    end,
+
     cycle_tab = function()
         core.change_tab_offset(nil, 1)
     end,
@@ -18,8 +27,6 @@ local commands = {
     previous_tab = function()
         core.change_tab_offset(nil, 1)
     end,
-
-    set_tab = core.set_current_tab,
 
     show_tabs = core.debug_print_tabs,
 }

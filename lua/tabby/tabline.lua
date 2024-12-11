@@ -64,7 +64,7 @@ local format_buffer_tab = function(bufnr, idx, is_active)
 
     local icon = ""
 
-    return bg .. leader_character .. fg .. " " .. icon .. filename .. " " .. bg .. ""
+    return bg .. " " .. leader_character .. fg .. " " .. icon .. filename .. " x " .. bg .. ""
 end
 
 --- Redraw the tab line for the given tab group.
@@ -80,7 +80,7 @@ local redraw_tabline = function(tab_group)
         table.insert(filenames, format_buffer_tab(buf_id, idx, idx == tab_group.index))
     end
 
-    local content = table.concat(filenames, " ")
+    local content = table.concat(filenames, "")
 
     log.debug("Setting winbar for window %d", tab_group.window)
 
@@ -94,16 +94,32 @@ local clear_tabline_for_window = function(window)
 end
 
 ---@param tab_group TabGroup The tab group that was clicked on
----@param cell_x number The X coordinate of the selected cell.
----@param cell_y number The Y coordinate of the selected cell.
+---@param cell_y number The window-y coordinate of the selected cell.
 ---@return number|nil bufnr The buffer number of the selected tab, or nil if no valid tab was selected.
-local get_clicked_tab = function(tab_group, cell_x, cell_y) end
+local get_clicked_tab = function(tab_group, cell_y)
+    local p0 = 0
+    local p1 = 0
+
+    for idx, bufnr in ipairs(tab_group.buffers) do
+        local tab_text = format_buffer_tab(bufnr, idx, idx == tab_group.index):gsub("%%#%w+#", "")
+        -- Disgusting lua handling of string length
+        local tab_length = select(2, string.gsub(tab_text, "[%z\1-\127\194-\244][\128-\191]*", ""))
+
+        p0 = p1
+        p1 = p0 + tab_length
+
+        if p0 < cell_y and cell_y <= p1 then
+            return idx
+        end
+    end
+end
 
 -- Exports
 local M = {}
 
 M.redraw_tabline = redraw_tabline
 M.clear_tabline_for_window = clear_tabline_for_window
+M.get_clicked_tab = get_clicked_tab
 
 M.register_refresh_highlight_groups_callback = function()
     vim.api.nvim_create_autocmd("ColorScheme", {

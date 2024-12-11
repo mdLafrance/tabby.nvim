@@ -5,7 +5,7 @@ local M = {}
 
 M.setup = config.setup
 
-config.setup({ debug = true })
+config.setup({})
 
 vim.keymap.set("n", "<leader>ot", ":Tabby new_tab<CR>", {})
 vim.keymap.set("n", "<leader>nt", ":Tabby next_tab<CR>", {})
