@@ -3,6 +3,14 @@
 local TabGroup = require("tabby.tab_group")
 local log = require("tabby.log")
 
+---@class Palette
+---@field text string Color for normal text
+---@field text_muted string Color for muted text
+---@field background string Color for the tabline background
+---@field tab_active string Color for active tabs
+---@field tab_inactive string Color for inactive tabs
+local Palette = {}
+
 local set_highlight_group_from_theme = function()
     local n = vim.api.nvim_get_hl_by_name("Normal", true)
     local p1 = vim.api.nvim_get_hl_by_name("TabLine", true)

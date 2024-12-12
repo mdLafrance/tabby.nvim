@@ -34,8 +34,6 @@ M.setup        = function(opts)
             TABBY_CONFIG[k] = v
         end
     end
-
-    print("Config set to:", vim.inspect(TABBY_CONFIG))
 end
 
 return M

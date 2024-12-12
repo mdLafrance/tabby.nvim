@@ -4,6 +4,7 @@ local buffers = require("tabby.buffers")
 local tabline = require("tabby.tabline")
 local TabGroup = require("tabby.tab_group")
 local log = require("tabby.log")
+local util = require("tabby.util")
 
 
 --- The global record of all currently managed tab groups.
@@ -37,12 +38,14 @@ end
 --- @param window number|nil The id of the tab window containing the target tab group. If this value is nil, the current window will be used.
 --- @param idx number The index of the tab to switch to.
 local set_current_tab = function(window, idx)
+    -- Infer window
     if not window then
         window = vim.api.set_current_win()
     end
 
     if not window_has_tab_group(window) then
-        error("Adding buffer to window with no tab group")
+        error("Attempting to set tab on window with no tab group")
+        return
     end
 
     local tabs = g_tabs[window]
@@ -55,10 +58,10 @@ local set_current_tab = function(window, idx)
 
     log.debug("Window %d switching to tab %d", window, tabs.index)
 
-    tabline.redraw_tabline(tabs)
-
     local bufnr = tabs.buffers[tabs.index]
 
+    -- Setting the buffer triggers an autocommand that will apply changed tab behaviors.
+    -- See `register_tab_callbacks` for details.
     vim.api.nvim_win_set_buf(window, bufnr)
     vim.api.nvim_exec_autocmds("BufRead", { -- trigger lsp attach commands
         buffer = bufnr,
@@ -72,7 +75,7 @@ end
 --- @param bufnr number The buffer number of the buffer to add
 --- @param window number The id of the tab window to add this new tab to.
 --- @param show boolean (Optional) Whether or not to show the new tab immediately. Defaults to true.
-local add_buffer_to_tab_group = function(bufnr, window, show)
+local add_buffer_to_tab_group = function(bufnr, window)
     if not window_has_tab_group(window) then
         error(string.format("Adding buffer to window with no tab group: [%s]", window))
     end
@@ -274,6 +277,7 @@ end
 
 
 M.register_tab_callbacks = function()
+    -- Callback to handle clicking on tabs
     vim.keymap.set({ 'n', 'i' }, '<LeftRelease>', function()
         local mp = vim.fn.getmousepos()
 
@@ -288,6 +292,57 @@ M.register_tab_callbacks = function()
             set_current_tab(mp.winid, tab)
         end
     end)
+
+    -- Callback to resolve tab group settings and display when the buffer
+    -- shown in a tab group changes
+    vim.api.nvim_create_autocmd("BufEnter", {
+        callback = function()
+            local bufnr = vim.api.nvim_get_current_buf()
+            local window = vim.api.nvim_get_current_win()
+
+            local tabs = g_tabs[window]
+
+            -- If a buffer is being opened on a window marked as a tab group
+            if tabs ~= nil then
+                local tab_exists = false
+
+                -- Check if there is already a tab for this buffer
+                for idx, buf in ipairs(tabs.buffers) do
+                    if buf == bufnr then
+                        tab_exists = true
+                        tabs.index = idx
+                    end
+                end
+
+                -- If not, then add new tab for this buffer
+                if not tab_exists then
+                    table.insert(tabs.buffers, bufnr)
+                    tabs.index = #tabs.buffers
+                end
+
+                tabline.redraw_tabline(tabs)
+            else
+                tabline.clear_tabline_for_window(window)
+            end
+        end
+    })
+
+    -- Callback to cleanup any tab window definitions when a window is closd
+    vim.api.nvim_create_autocmd("WinCLosed", {
+        callback = function(event)
+            -- print(vim.inspect(event))
+
+            local window = event.file
+            local tabs = g_tabs[window]
+
+            if tabs ~= nil then
+                print("tabssss closssee")
+                g_tabs[window] = nil
+
+                tabline.clear_tabline_for_window(window)
+            end
+        end
+    })
 
     -- vim.api.nvim_create_autocmd("BufDelete", {
     --     callback = function()
