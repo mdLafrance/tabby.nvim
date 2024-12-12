@@ -1,3 +1,4 @@
+local log = require("tabby.log")
 local core = require("tabby.core")
 
 local M = {}
@@ -28,6 +29,17 @@ local commands = {
         core.change_tab_offset(nil, 1)
     end,
 
+    detatch = function(direction)
+        local directions = { left = true, right = true, above = true, below = true }
+
+        if not directions[direction] then
+            log.notify_warning("Invalid direction to split: %s", vim.inspect(direction))
+            return
+        end
+
+        core.detach_tab(nil, nil, direction)
+    end,
+
     show_tabs = core.debug_print_tabs,
 }
 
@@ -39,18 +51,9 @@ M.register_commands = function()
                 error("No such command: " .. args.fargs[1])
             end
 
-            -- NOTE: This is due to how lua handles empty tables and "truthyness".
-            -- It is often convenient to check if an optional arg is 'nil' by simply
-            -- doing a truthyness check. However, if the fargs slice is empty, then
-            -- the args passed is {} which will incorrectly pass the truthyness check.
             local fn_args = vim.list_slice(args.fargs, 2)
 
-            -- Manually convert empty args table to nil
-            if next(fn_args) == nil then
-                fn_args = nil
-            end
-
-            cmd(fn_args)
+            cmd(unpack(fn_args))
         end,
         {
             range = true,

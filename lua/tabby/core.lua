@@ -226,6 +226,41 @@ local close_tab = function(window, tab)
 end
 
 
+--- Detach the given tab from the given tab group and split it out in a direction.
+---
+--- Will throw an error if the given window id is not a tab group.
+---
+--- @param window number|nil Window id containing a tab group. If this value is nil, the current window will be used.
+--- @param idx number|nil Tab index to split. If this value is nil, the current tab will be used.
+--- @param direction 'above'|'below'|'left'|'right' The direction to perform the split.
+function detach_tab(window, idx, direction)
+    if window == nil then
+        window = vim.api.nvim_get_current_win()
+    end
+
+    if not window_has_tab_group(window) then
+        error("Cannot detach tab from window with no tab group")
+        return
+    end
+
+    local tabs = g_tabs[window]
+
+    if idx == nil then
+        idx = tabs.index
+    elseif idx < 1 or idx > #tabs.buffers then
+        error("Invalid tab to split:", idx)
+        return
+    end
+
+    local buf = tabs.buffers[idx]
+
+    vim.api.nvim_open_win(buf, true, {
+        split = direction,
+    })
+
+    close_tab(window, idx)
+end
+
 -- Exports --
 local M = {}
 
@@ -233,6 +268,7 @@ M.set_current_tab = set_current_tab
 M.convert_to_tab_group = convert_to_tab_group
 M.change_tab_offset = change_tab_offset
 M.close_tab = close_tab
+M.detach_tab = detach_tab
 
 --- Opens a telescope picker to browse for a file to open as a new tab.
 ---
