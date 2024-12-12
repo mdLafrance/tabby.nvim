@@ -103,7 +103,7 @@ end
 
 ---@param tab_group TabGroup The tab group that was clicked on
 ---@param cell_y number The window-y coordinate of the selected cell.
----@return number|nil bufnr The buffer number of the selected tab, or nil if no valid tab was selected.
+---@return {idx: number, close: boolean}|nil res The index of the clicked tab, and whether the user clicked on the close button. If the user did not click a valid tab, nil is returned instead.
 local get_clicked_tab = function(tab_group, cell_y)
     local p0 = 0
     local p1 = 0
@@ -117,7 +117,10 @@ local get_clicked_tab = function(tab_group, cell_y)
         p1 = p0 + tab_length
 
         if p0 < cell_y and cell_y <= p1 then
-            return idx
+            return {
+                idx = idx,
+                close = cell_y == (p1 - 2) -- if we clicked on the x cell
+            }
         end
     end
 end

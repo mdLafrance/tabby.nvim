@@ -66,6 +66,8 @@ local set_current_tab = function(window, idx)
     vim.api.nvim_exec_autocmds("BufRead", { -- trigger lsp attach commands
         buffer = bufnr,
     })
+
+    tabline.redraw_tabline(tabs)
 end
 
 
@@ -201,7 +203,7 @@ local close_tab = function(window, tab)
     log.debug("Closing tab %d", tab)
     table.remove(tabs.buffers, tab)
 
-    -- Last tab - close the whole window
+    -- No more tabs - close the whole window
     if #tabs.buffers == 0 then
         log.debug("No more tabs for tab group, closing window")
         g_tabs[window] = nil
@@ -214,10 +216,10 @@ local close_tab = function(window, tab)
 
         vim.api.nvim_win_close(window, true)
         return
-    end
 
-    if tab > 1 then
-        tabs.index = tab - 1
+        -- This was the last tab, decrement index
+    elseif tabs.index > #tabs.buffers then
+        tabs.index = #tabs.buffers
     end
 
     set_current_tab(window, tabs.index)
@@ -287,9 +289,19 @@ M.register_tab_callbacks = function()
         local tabs = g_tabs[mp.winid]
 
         if x == 1 and tabs ~= nil then
-            local tab = tabline.get_clicked_tab(tabs, y)
+            local res = tabline.get_clicked_tab(tabs, y)
 
-            set_current_tab(mp.winid, tab)
+            if res == nil then
+                return
+            end
+
+            local tab, do_close = res.idx, res.close
+
+            if do_close then
+                close_tab(mp.winid, tab)
+            else
+                set_current_tab(mp.winid, tab)
+            end
         end
     end)
 
