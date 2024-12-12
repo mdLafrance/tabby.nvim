@@ -26,7 +26,7 @@ local get_buffer_for_file = function(file_path)
     end
 
     -- Create a new buffer and load file_path contents
-    buf = vim.api.nvim_create_buf(true, true)
+    buf = vim.api.nvim_create_buf(true, false)
     vim.api.nvim_buf_set_name(buf, file_path)
     log.debug("Creating new buffer: %d", buf)
 
