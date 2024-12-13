@@ -278,7 +278,7 @@ M.close_all_tabs = function(window)
         log.error("Cant close all tabs on window with no tab group: %d", window)
     end
 
-    for _, _ in ipairs(tabs.buffers) do
+    for i = 1, #tabs.buffers do
         close_tab(window, nil)
     end
 end
