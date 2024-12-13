@@ -20,8 +20,7 @@ local window_has_tab_group = function(window)
 end
 
 
---- Creates a tab group on the given window.
---- NOTE: This tab group will be empty. Call add_buffer_to_tab_group to add buffers to it.
+--- Register a tab group for the given window.
 ---
 ---@param window number The numerical id of the window to tabify
 local create_tab_group = function(window)
@@ -74,7 +73,6 @@ end
 --- This function will error if the given window has no associated tab group.
 --- @param bufnr number The buffer number of the buffer to add
 --- @param window number The id of the tab window to add this new tab to.
---- @param show boolean (Optional) Whether or not to show the new tab immediately. Defaults to true.
 local add_buffer_to_tab_group = function(bufnr, window)
     if not window_has_tab_group(window) then
         error(string.format("Adding buffer to window with no tab group: [%s]", window))
@@ -84,11 +82,7 @@ local add_buffer_to_tab_group = function(bufnr, window)
 
     table.insert(g_tabs[window].buffers, bufnr)
 
-    tabline.redraw_tabline(g_tabs[window])
-
-    if show ~= false then
-        set_current_tab(window, -1)
-    end
+    set_current_tab(window, -1)
 end
 
 
@@ -148,14 +142,6 @@ local convert_to_tab_group = function(window)
 end
 
 
-function window_is_normal_buftype(window)
-    local bufnr = vim.api.nvim_win_get_buf(window)
-
-    local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
-
-    return buftype == "normal"
-end
-
 --- Change the tab of the given tab group by the given offset.
 ---
 --- This function will error if the given window has no associated tab group.
@@ -181,6 +167,9 @@ end
 
 
 --- Close the tab on the given tab group at the given index.
+---
+--- If there are no more tabs after this removal operation, then the tab group is also removed.
+---
 --- @param window number|nil The window id of a window with an associated tab group. Will use the current window if nil.
 --- @param tab number|nil The tab to close. Will use the current tab if nil.
 local close_tab = function(window, tab)
@@ -236,10 +225,12 @@ end
 ---
 --- Will throw an error if the given window id is not a tab group.
 ---
+--- Will throw an error if the tab index is out of bounds.
+---
 --- @param window number|nil Window id containing a tab group. If this value is nil, the current window will be used.
 --- @param idx number|nil Tab index to split. If this value is nil, the current tab will be used.
 --- @param direction 'above'|'below'|'left'|'right' The direction to perform the split.
-function detach_tab(window, idx, direction)
+local function detach_tab(window, idx, direction)
     if window == nil then
         window = vim.api.nvim_get_current_win()
     end
@@ -291,7 +282,7 @@ M.browse_and_open_as_tab = function()
             -- If this is called while the current window is not writable, open
             -- a new window to use as the tab group
             if vim.api.nvim_buf_get_option(buf, "buftype") ~= "normal" then
-                window = vim.api.nvim_open_win(new_buf, true, {win = -1, split='right'})
+                window = vim.api.nvim_open_win(new_buf, true, { win = -1, split = 'right' })
             end
 
             convert_to_tab_group(window)
@@ -327,6 +318,9 @@ M.get_tabs_for_window = function(window)
 end
 
 
+-- Register relevant autocommands
+--
+-- Call only once during setup
 M.register_tab_callbacks = function()
     -- Callback to handle clicking on tabs
     vim.keymap.set({ 'n', 'i' }, '<LeftRelease>', function()
