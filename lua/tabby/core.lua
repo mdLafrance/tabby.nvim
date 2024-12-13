@@ -286,9 +286,9 @@ M.browse_and_open_as_tab = function()
             end
 
             convert_to_tab_group(window)
+        else
+            add_buffer_to_tab_group(new_buf, window)
         end
-
-        add_buffer_to_tab_group(new_buf, window)
     end)
 end
 
