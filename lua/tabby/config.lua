@@ -10,9 +10,9 @@ TABBY_CONFIG = {
     always_convert_to_tab_group = false,
     show_marks_in_tab_bar = true,
     show_icon_in_tab_bar = true,
+    show_close_all_button_in_tab_bar = true,
     debug = false,
     supress_notifications = false,
-
 }
 
 local M      = {}
@@ -25,6 +25,7 @@ M.setup      = function(opts)
     require("tabby.tabline").register_refresh_highlight_groups_callback()
     require("tabby.core").register_tab_callbacks()
     require("tabby.commands").register_commands()
+    local log = require("tabby.log")
 
     if opts == nil then
         return

@@ -110,13 +110,15 @@ local redraw_tabline = function(tab_group)
 
     local content = table.concat(filenames, "")
 
-    local content_len = get_length_of_tabline_text(content)
-    local window_width = vim.api.nvim_win_get_width(tab_group.window)
+    if opts.show_close_all_button_in_tab_bar then
+        local content_len = get_length_of_tabline_text(content)
+        local window_width = vim.api.nvim_win_get_width(tab_group.window)
 
-    local space_remaining = window_width - content_len
+        local space_remaining = window_width - content_len
 
-    if space_remaining > 1 then
-        content = content .. string.rep(" ", space_remaining - 2) .. ""
+        if space_remaining > 1 then
+            content = content .. string.rep(" ", space_remaining - 2) .. "󰱝"
+        end
     end
 
     log.debug("Setting winbar for window %d", tab_group.window)
