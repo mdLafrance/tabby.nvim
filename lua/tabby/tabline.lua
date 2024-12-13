@@ -89,6 +89,12 @@ local format_buffer_tab = function(bufnr, idx, is_active)
     return bg .. " " .. leader_character .. fg .. " " .. icon_highlight .. icon .. fg .. filename .. " x " .. bg .. ""
 end
 
+---@return number len
+local function get_length_of_tabline_text(text)
+    local stripped = text:gsub("%%#%w+#", "")
+    return select(2, string.gsub(stripped, "[%z\1-\127\194-\244][\128-\191]*", ""))
+end
+
 --- Redraw the tab line for the given tab group.
 ---
 --- This function will error if the associated tabline hasn't been created.
@@ -103,6 +109,15 @@ local redraw_tabline = function(tab_group)
     end
 
     local content = table.concat(filenames, "")
+
+    local content_len = get_length_of_tabline_text(content)
+    local window_width = vim.api.nvim_win_get_width(tab_group.window)
+
+    local space_remaining = window_width - content_len
+
+    if space_remaining > 1 then
+        content = content .. string.rep(" ", space_remaining - 2) .. ""
+    end
 
     log.debug("Setting winbar for window %d", tab_group.window)
 
@@ -123,9 +138,7 @@ local get_clicked_tab = function(tab_group, cell_y)
     local p1 = 0
 
     for idx, bufnr in ipairs(tab_group.buffers) do
-        local tab_text = format_buffer_tab(bufnr, idx, idx == tab_group.index):gsub("%%#%w+#", "")
-        -- Disgusting lua handling of string length
-        local tab_length = select(2, string.gsub(tab_text, "[%z\1-\127\194-\244][\128-\191]*", ""))
+        local tab_length = get_length_of_tabline_text(format_buffer_tab(bufnr, idx, idx == tab_group.index))
 
         p0 = p1
         p1 = p0 + tab_length

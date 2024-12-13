@@ -385,9 +385,7 @@ M.register_tab_callbacks = function()
     -- Callback to cleanup any tab window definitions when a window is closd
     vim.api.nvim_create_autocmd("WinCLosed", {
         callback = function(event)
-            -- print(vim.inspect(event))
-
-            local window = event.file
+            local window = tonumber(event.file)
             local tabs = g_tabs[window]
 
             if tabs ~= nil then
@@ -398,6 +396,23 @@ M.register_tab_callbacks = function()
             end
         end
     })
+
+    -- Redraw tabline when window resized
+    vim.api.nvim_create_autocmd("WinResized", {
+        callback = function()
+            -- NOTE: There's strange behavior about which window gets a WinResized
+            -- event when resizing split windows. Only one seems to get the event.
+            --
+            -- Instead, just redraw all tablines when a resize occurs. This shouldnt actually
+            -- be too wasteful in common use cases since:
+            -- 1. The operation is cheap
+            -- 2. There's a high chance at least one of the tab groups is being resized.
+            for _, tabs in pairs(g_tabs) do
+                tabline.redraw_tabline(tabs)
+            end
+        end
+    })
+
 
     -- vim.api.nvim_create_autocmd("BufDelete", {
     --     callback = function()
