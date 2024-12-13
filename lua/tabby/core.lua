@@ -2,9 +2,7 @@
 
 local buffers = require("tabby.buffers")
 local tabline = require("tabby.tabline")
-local TabGroup = require("tabby.tab_group")
 local log = require("tabby.log")
-local util = require("tabby.util")
 
 
 --- The global record of all currently managed tab groups.
@@ -150,6 +148,14 @@ local convert_to_tab_group = function(window)
 end
 
 
+function window_is_normal_buftype(window)
+    local bufnr = vim.api.nvim_win_get_buf(window)
+
+    local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+
+    return buftype == "normal"
+end
+
 --- Change the tab of the given tab group by the given offset.
 ---
 --- This function will error if the given window has no associated tab group.
@@ -279,12 +285,19 @@ M.browse_and_open_as_tab = function()
     local buf = vim.api.nvim_get_current_buf()
 
     telescope_pick_file(function(file)
+        local new_buf = buffers.get_buffer_for_file(file)
+
         if not window_has_tab_group(window) then
+            -- If this is called while the current window is not writable, open
+            -- a new window to use as the tab group
+            if vim.api.nvim_buf_get_option(buf, "buftype") ~= "normal" then
+                window = vim.api.nvim_open_win(new_buf, true, {win = -1, split='right'})
+            end
+
             convert_to_tab_group(window)
         end
 
-        local new_buf = buffers.get_buffer_for_file(file)
-        add_buffer_to_tab_group(new_buf, window, true)
+        add_buffer_to_tab_group(new_buf, window)
     end)
 end
 
@@ -384,9 +397,9 @@ M.register_tab_callbacks = function()
             local tabs = g_tabs[window]
 
             if tabs ~= nil then
-                print("tabssss closssee")
-                g_tabs[window] = nil
+                log.debug("Window %d closed with tabs. Clearing tab group", window)
 
+                g_tabs[window] = nil
                 tabline.clear_tabline_for_window(window)
             end
         end

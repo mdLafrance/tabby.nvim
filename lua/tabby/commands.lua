@@ -33,7 +33,8 @@ local commands = {
         local directions = { left = true, right = true, above = true, below = true }
 
         if not directions[direction] then
-            log.notify_warning("Invalid direction to split: %s", vim.inspect(direction))
+            log.notify_warning("Invalid direction to split: %s\nValid directions are left, right, above, below",
+                vim.inspect(direction))
             return
         end
 
