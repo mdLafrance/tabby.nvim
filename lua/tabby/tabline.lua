@@ -1,5 +1,7 @@
 -- Functionality for creating the visual tab line indicator
 
+local devicons = require('nvim-web-devicons')
+
 local TabGroup = require("tabby.tab_group")
 local log = require("tabby.log")
 
@@ -48,10 +50,15 @@ local set_highlight_group_from_theme = function()
     })
 end
 
+local function get_icon_for_filename(filename)
+    local extension = vim.fn.expand("%:e")
+end
+
 ---@param bufnr number The id of the buffer this tab represents
 ---@param is_active boolean Whether or not this tab is active
 local format_buffer_tab = function(bufnr, idx, is_active)
     local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":t")
+    local ext = vim.fn.fnamemodify(filename, ":e")
 
     local bg = ""
     local fg = ""
@@ -70,7 +77,11 @@ local format_buffer_tab = function(bufnr, idx, is_active)
         leader_character = ""
     end
 
-    local icon = ""
+    local icon, _ = devicons.get_icon(filename, ext)
+
+    if icon ~= "" then
+        icon = icon .. " "
+    end
 
     return bg .. " " .. leader_character .. fg .. " " .. icon .. filename .. " x " .. bg .. ""
 end
