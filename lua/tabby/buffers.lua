@@ -1,6 +1,6 @@
 local log = require("tabby.log")
 
-local try_get_existing_buffer = function(file)
+local function try_get_existing_buffer(file)
     local buffers = vim.api.nvim_list_bufs()
     for _, buf in ipairs(buffers) do
         if vim.api.nvim_buf_is_loaded(buf) then
@@ -14,7 +14,7 @@ local try_get_existing_buffer = function(file)
     return nil
 end
 
-local get_buffer_for_file = function(file_path)
+local function get_buffer_for_file(file_path)
     log.debug("Obtaining buffer for file %s", file_path)
 
     -- A buffer of the same file_path is open, use that

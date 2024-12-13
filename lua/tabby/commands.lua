@@ -29,6 +29,14 @@ local commands = {
         core.change_tab_offset(nil, 1)
     end,
 
+    close_tab = function()
+        core.close_tab(nil, nil)
+    end,
+
+    close_all = function()
+        core.close_all_tabs(nil)
+    end,
+
     detatch = function(direction)
         local directions = { left = true, right = true, above = true, below = true }
 

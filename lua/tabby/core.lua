@@ -15,7 +15,7 @@ local g_tabs = {}
 ---Returns true if the given window id has an associated tab group.
 ---
 ---@param window number The window id
-local window_has_tab_group = function(window)
+local function window_has_tab_group(window)
     return g_tabs[window] ~= nil
 end
 
@@ -23,7 +23,7 @@ end
 --- Register a tab group for the given window.
 ---
 ---@param window number The numerical id of the window to tabify
-local create_tab_group = function(window)
+local function create_tab_group(window)
     g_tabs[window] = { window = window, buffers = {}, index = 0 }
 end
 
@@ -34,7 +34,7 @@ end
 ---
 --- @param window number|nil The id of the tab window containing the target tab group. If this value is nil, the current window will be used.
 --- @param idx number The index of the tab to switch to.
-local set_current_tab = function(window, idx)
+local function set_current_tab(window, idx)
     -- Infer window
     if not window then
         window = vim.api.set_current_win()
@@ -73,7 +73,7 @@ end
 --- This function will error if the given window has no associated tab group.
 --- @param bufnr number The buffer number of the buffer to add
 --- @param window number The id of the tab window to add this new tab to.
-local add_buffer_to_tab_group = function(bufnr, window)
+local function add_buffer_to_tab_group(bufnr, window)
     if not window_has_tab_group(window) then
         error(string.format("Adding buffer to window with no tab group: [%s]", window))
     end
@@ -90,7 +90,7 @@ end
 --- Once the user has selected a file, the given callback function is invoked with the full file path.
 ---
 --- @param callback fun(path: string): nil The callback function to execute when a user has selected a file.
-local telescope_pick_file = function(callback)
+local function telescope_pick_file(callback)
     local telescope = require("telescope.builtin")
     local actions = require("telescope.actions")
     local action_state = require("telescope.actions.state")
@@ -121,7 +121,7 @@ end
 ---
 --- This function will error if the given window has no associated tab group.
 ---@param window number|nil The id of the tab window to convert. If this value is nil, the current window will be used.
-local convert_to_tab_group = function(window)
+local function convert_to_tab_group(window)
     -- if window == nil or (type(window) == "table" and next(window) == nil) then
     --     window = vim.api.nvim_get_current_win()
     -- end
@@ -148,7 +148,7 @@ end
 --
 --- @param window number|nil The id of the tab window containing the target tab group. If this value is nil, the current window will be used.
 --- @param offset number The offset to change the tab by (positive, or negative).
-local change_tab_offset = function(window, offset)
+local function change_tab_offset(window, offset)
     if not window then
         window = vim.api.nvim_get_current_win()
     end
@@ -171,8 +171,8 @@ end
 --- If there are no more tabs after this removal operation, then the tab group is also removed.
 ---
 --- @param window number|nil The window id of a window with an associated tab group. Will use the current window if nil.
---- @param tab number|nil The tab to close. Will use the current tab if nil.
-local close_tab = function(window, tab)
+--- @param tab number|nil The index to close. Will use the current tab if nil.
+local function close_tab(window, tab)
     -- Infer window if not provided
     if window == nil then
         window = vim.api.nvim_get_current_win()
@@ -266,6 +266,22 @@ M.convert_to_tab_group = convert_to_tab_group
 M.change_tab_offset = change_tab_offset
 M.close_tab = close_tab
 M.detach_tab = detach_tab
+
+M.close_all_tabs = function(window)
+    if window == nil then
+        window = vim.api.nvim_get_current_win()
+    end
+
+    local tabs = g_tabs[window]
+
+    if tabs == nil then
+        log.error("Cant close all tabs on window with no tab group: %d", window)
+    end
+
+    for _, _ in ipairs(tabs.buffers) do
+        close_tab(window, nil)
+    end
+end
 
 --- Opens a telescope picker to browse for a file to open as a new tab.
 ---

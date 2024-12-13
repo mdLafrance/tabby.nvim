@@ -14,7 +14,7 @@ local opts = require("tabby.config").opts
 ---@field tab_inactive string Color for inactive tabs
 local Palette = {}
 
-local set_highlight_group_from_theme = function()
+local function set_highlight_group_from_theme()
     local n = vim.api.nvim_get_hl_by_name("Normal", true)
     local p1 = vim.api.nvim_get_hl_by_name("TabLine", true)
     local p2 = vim.api.nvim_get_hl_by_name("StatusLine", true)
@@ -54,7 +54,7 @@ end
 
 ---@param bufnr number The id of the buffer this tab represents
 ---@param is_active boolean Whether or not this tab is active
-local format_buffer_tab = function(bufnr, idx, is_active)
+local function format_buffer_tab(bufnr, idx, is_active)
     local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":t")
     local ext = vim.fn.fnamemodify(filename, ":e")
 
@@ -99,7 +99,7 @@ end
 ---
 --- This function will error if the associated tabline hasn't been created.
 --- @param tab_group TabGroup The tab group to redraw for
-local redraw_tabline = function(tab_group)
+local function redraw_tabline(tab_group)
     log.debug("Drawing tabline for %d (%d tabs)", tab_group.window, #tab_group.buffers)
 
     local filenames = {}
@@ -126,7 +126,7 @@ local redraw_tabline = function(tab_group)
     vim.api.nvim_win_set_option(tab_group.window, "winbar", content .. "%#TabbyBG#")
 end
 
-local clear_tabline_for_window = function(window)
+local function clear_tabline_for_window(window)
     log.debug("Clearing tabline for window %d", window)
 
     vim.api.nvim_win_set_option(window, "winbar", nil)
@@ -135,7 +135,7 @@ end
 ---@param tab_group TabGroup The tab group that was clicked on
 ---@param cell_y number The window-y coordinate of the selected cell.
 ---@return {idx: number, close: boolean}|nil res The index of the clicked tab, and whether the user clicked on the close button. If the user did not click a valid tab, nil is returned instead.
-local get_clicked_tab = function(tab_group, cell_y)
+local function get_clicked_tab(tab_group, cell_y)
     local p0 = 0
     local p1 = 0
 
