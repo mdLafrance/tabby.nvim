@@ -4,6 +4,7 @@ local devicons = require('nvim-web-devicons')
 
 local TabGroup = require("tabby.tab_group")
 local log = require("tabby.log")
+local opts = require("tabby.config").opts
 
 ---@class Palette
 ---@field text string Color for normal text
@@ -50,9 +51,6 @@ local set_highlight_group_from_theme = function()
     })
 end
 
-local function get_icon_for_filename(filename)
-    local extension = vim.fn.expand("%:e")
-end
 
 ---@param bufnr number The id of the buffer this tab represents
 ---@param is_active boolean Whether or not this tab is active
@@ -71,19 +69,24 @@ local format_buffer_tab = function(bufnr, idx, is_active)
         fg = "%#TabbyFGInactive#"
     end
 
-    local leader_character = ""
+    local leader_character = ""
 
-    if idx > 1 then
-        leader_character = ""
+    local icon = ""
+    local icon_highlight = ""
+
+    if opts.show_icon_in_tab_bar then
+        icon, hlg = devicons.get_icon(filename, ext)
+
+        if icon ~= "" then
+            icon = icon .. "  "
+        end
+
+        if is_active then
+            icon_highlight = "%#" .. hlg .. "#"
+        end
     end
 
-    local icon, _ = devicons.get_icon(filename, ext)
-
-    if icon ~= "" then
-        icon = icon .. " "
-    end
-
-    return bg .. " " .. leader_character .. fg .. " " .. icon .. filename .. " x " .. bg .. ""
+    return bg .. " " .. leader_character .. fg .. " " .. icon_highlight .. icon .. fg .. filename .. " x " .. bg .. ""
 end
 
 --- Redraw the tab line for the given tab group.

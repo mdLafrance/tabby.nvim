@@ -9,6 +9,7 @@
 TABBY_CONFIG = {
     always_convert_to_tab_group = false,
     show_marks_in_tab_bar = true,
+    show_icon_in_tab_bar = true,
     debug = false,
     supress_notifications = false,
 
