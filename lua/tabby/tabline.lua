@@ -77,7 +77,7 @@ local function format_buffer_tab(bufnr, idx, is_active)
     if opts.show_icon_in_tab_bar then
         icon, hlg = devicons.get_icon(filename, ext)
 
-        if icon ~= "" then
+        if icon and icon ~= "" then
             icon = icon .. "  "
         end
 
@@ -115,7 +115,6 @@ local function redraw_tabline(tab_group)
         local window_width = vim.api.nvim_win_get_width(tab_group.window)
 
         local space_remaining = window_width - content_len
-
         if space_remaining > 1 then
             content = content .. string.rep(" ", space_remaining - 2) .. "󰱝"
         end

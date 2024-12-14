@@ -7,7 +7,7 @@
 ---@field debug boolean Whether or not to enable debug trace logging.
 ---@field supress_notifications boolean Whether or not to suppress popup notifications. These will be warning messages fired when attempting to perform invalid operations.
 TABBY_CONFIG = {
-    always_convert_to_tab_group = false,
+    always_convert_to_tab_group = true,
     show_marks_in_tab_bar = true,
     show_icon_in_tab_bar = true,
     show_close_all_button_in_tab_bar = true,

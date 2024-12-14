@@ -3,7 +3,7 @@
 local buffers = require("tabby.buffers")
 local tabline = require("tabby.tabline")
 local log = require("tabby.log")
-
+local opts = require("tabby.config").opts
 
 --- The global record of all currently managed tab groups.
 ---
@@ -364,7 +364,7 @@ M.register_tab_callbacks = function()
         end
     end)
 
-    -- Callback to resolve tab group settings and display when the buffer
+    -- Callback to resolve tab group settings and tabline when the buffer
     -- shown in a tab group changes
     vim.api.nvim_create_autocmd("BufEnter", {
         callback = function()
@@ -392,6 +392,15 @@ M.register_tab_callbacks = function()
                 end
 
                 tabline.redraw_tabline(tabs)
+            elseif opts.always_convert_to_tab_group then
+                local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+
+                print("OPen! But buftype is", buftype)
+
+                if not buftype or buftype == "" or buftype == "normal" then
+                    print("So convert??")
+                    convert_to_tab_group(window)
+                end
             else
                 tabline.clear_tabline_for_window(window)
             end
@@ -428,27 +437,6 @@ M.register_tab_callbacks = function()
             end
         end
     })
-
-
-    -- vim.api.nvim_create_autocmd("BufDelete", {
-    --     callback = function()
-    --         log.notify_info("Returning false..")
-    --         return false
-    --     end
-    -- })
-
-    -- vim.api.nvim_create_autocmd("WinClosed", {
-    --     callback = function(event)
-    --         vim.cmd("abort")
-    --         local window = event.file
-
-    --         local tabs = g_tabs[window]
-
-    --         if tabs ~= nil then
-    --             log.debug("Tab window closing: %d", tabs.window)
-    --         end
-    --     end
-    -- })
 end
 
 -- Debug utils
