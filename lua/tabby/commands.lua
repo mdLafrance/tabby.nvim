@@ -53,6 +53,8 @@ local commands = {
 }
 
 M.register_commands = function()
+    log.debug("Registering commands")
+
     vim.api.nvim_create_user_command("Tabby", function(args)
             local cmd = commands[args.fargs[1]]
 

@@ -75,7 +75,12 @@ local function format_buffer_tab(bufnr, idx, is_active)
     local icon_highlight = ""
 
     if opts.show_icon_in_tab_bar then
+        local hlg
+
         icon, hlg = devicons.get_icon(filename, ext)
+
+        icon = icon or ""
+        hlg = hlg or ""
 
         if icon and icon ~= "" then
             icon = icon .. "  "

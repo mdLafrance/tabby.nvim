@@ -3,7 +3,6 @@
 local buffers = require("tabby.buffers")
 local tabline = require("tabby.tabline")
 local log = require("tabby.log")
-local opts = require("tabby.config").opts
 
 --- The global record of all currently managed tab groups.
 ---
@@ -138,9 +137,8 @@ local function convert_to_tab_group(window)
     local buf = vim.api.nvim_win_get_buf(window)
 
     create_tab_group(window)
-    add_buffer_to_tab_group(buf, window, true)
+    add_buffer_to_tab_group(buf, window)
 end
-
 
 --- Change the tab of the given tab group by the given offset.
 ---
@@ -221,6 +219,29 @@ local function close_tab(window, tab)
 end
 
 
+--- Close all tabs on the given window tag group.
+---
+--- This function will error if there aren't any tab groups on the given window
+---
+--- @param window number|nil The window id to clear tabs for. If nil, the current window will be used.
+local function close_all_tabs(window)
+    if window == nil then
+        window = vim.api.nvim_get_current_win()
+    end
+
+    local tabs = g_tabs[window]
+
+    if tabs == nil then
+        log.error("Cant close all tabs on window with no tab group: %d", window)
+        return
+    end
+
+    for _ = 1, #tabs.buffers do
+        close_tab(window, nil)
+    end
+end
+
+
 --- Detach the given tab from the given tab group and split it out in a direction.
 ---
 --- Will throw an error if the given window id is not a tab group.
@@ -266,22 +287,7 @@ M.convert_to_tab_group = convert_to_tab_group
 M.change_tab_offset = change_tab_offset
 M.close_tab = close_tab
 M.detach_tab = detach_tab
-
-M.close_all_tabs = function(window)
-    if window == nil then
-        window = vim.api.nvim_get_current_win()
-    end
-
-    local tabs = g_tabs[window]
-
-    if tabs == nil then
-        log.error("Cant close all tabs on window with no tab group: %d", window)
-    end
-
-    for i = 1, #tabs.buffers do
-        close_tab(window, nil)
-    end
-end
+M.close_all_tabs = close_all_tabs
 
 --- Opens a telescope picker to browse for a file to open as a new tab.
 ---
@@ -297,7 +303,7 @@ M.browse_and_open_as_tab = function()
         if not window_has_tab_group(window) then
             -- If this is called while the current window is not writable, open
             -- a new window to use as the tab group
-            if vim.api.nvim_buf_get_option(buf, "buftype") ~= "normal" then
+            if vim.api.nvim_get_option_value("buftype", { buf = buf }) ~= "" then
                 window = vim.api.nvim_open_win(new_buf, true, { win = -1, split = 'right' })
             end
 
@@ -308,22 +314,6 @@ M.browse_and_open_as_tab = function()
     end)
 end
 
---- Removes the tab group associated with the given window.
---- This function will error if the given window has no associated tab group.
---- This function will error if there is more than one tab attached to this tab group.
----
---- @param window number|nil The id of the tab window containing the target tab group. If this value is nil, the current window will be used.
-M.remove_tab_group = function(window)
-    local tabs = g_tabs[window]
-
-    if tabs == nil then
-        error("Cannot remove tab group on window with no tab group")
-    end
-
-    if #tabs.buffers > 1 then
-        error("Cannot remove tab group with more than one tab")
-    end
-end
 
 --- Gets the tab group associated with the given window.
 ---
@@ -392,15 +382,6 @@ M.register_tab_callbacks = function()
                 end
 
                 tabline.redraw_tabline(tabs)
-            elseif opts.always_convert_to_tab_group then
-                local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
-
-                print("OPen! But buftype is", buftype)
-
-                if not buftype or buftype == "" or buftype == "normal" then
-                    print("So convert??")
-                    convert_to_tab_group(window)
-                end
             else
                 tabline.clear_tabline_for_window(window)
             end
@@ -411,6 +392,12 @@ M.register_tab_callbacks = function()
     vim.api.nvim_create_autocmd("WinCLosed", {
         callback = function(event)
             local window = tonumber(event.file)
+
+            if not window then
+                log.error("Couldn't get window from closed event:", vim.inspect(event))
+                return
+            end
+
             local tabs = g_tabs[window]
 
             if tabs ~= nil then
