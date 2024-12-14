@@ -37,7 +37,7 @@ local commands = {
         core.close_all_tabs(nil)
     end,
 
-    detatch = function(direction)
+    detach = function(direction)
         local directions = { left = true, right = true, above = true, below = true }
 
         if not directions[direction] then

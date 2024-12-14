@@ -1,3 +1,5 @@
+-- Functionality for opening and working with buffers
+
 local log = require("tabby.log")
 
 local function try_get_existing_buffer(file)

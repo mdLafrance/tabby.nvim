@@ -3,6 +3,7 @@
 local buffers = require("tabby.buffers")
 local tabline = require("tabby.tabline")
 local log = require("tabby.log")
+local opts = require("tabby.config").opts
 
 --- The global record of all currently managed tab groups.
 ---
@@ -216,6 +217,11 @@ local function close_tab(window, tab)
     end
 
     set_current_tab(window, tabs.index)
+
+    if opts.remove_tab_group_if_only_tab and #tabs.buffers == 1 then
+        g_tabs[window] = nil
+        tabline.clear_tabline_for_window(window)
+    end
 end
 
 
@@ -308,9 +314,9 @@ M.browse_and_open_as_tab = function()
             end
 
             convert_to_tab_group(window)
-        else
-            add_buffer_to_tab_group(new_buf, window)
         end
+
+        add_buffer_to_tab_group(new_buf, window)
     end)
 end
 

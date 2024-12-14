@@ -8,6 +8,7 @@
 ---@field supress_notifications boolean Whether or not to suppress popup notifications. These will be warning messages fired when attempting to perform invalid operations.
 TABBY_CONFIG = {
     show_marks_in_tab_bar = true,
+    remove_tab_group_if_only_tab = true,
     show_icon_in_tab_bar = true,
     show_close_all_button_in_tab_bar = true,
     debug = false,
