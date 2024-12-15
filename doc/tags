@@ -1,5 +1,9 @@
-:Tabby	tabby.nvim.txt	/*:Tabby*
-help	tabby.nvim.txt	/*help*
+:TabbyCloseTab	tabby.nvim.txt	/*:TabbyCloseTab*
+:TabbyConvertToTabGroup	tabby.nvim.txt	/*:TabbyConvertToTabGroup*
+:TabbyHelp	tabby.nvim.txt	/*:TabbyHelp*
+:TabbyNewTab	tabby.nvim.txt	/*:TabbyNewTab*
+:TabbyPreviousTab	tabby.nvim.txt	/*:TabbyPreviousTab*
+:TabbySetTab	tabby.nvim.txt	/*:TabbySetTab*
 tabby.about	tabby.nvim.txt	/*tabby.about*
 tabby.commands	tabby.nvim.txt	/*tabby.commands*
 tabby.configuration	tabby.nvim.txt	/*tabby.configuration*
