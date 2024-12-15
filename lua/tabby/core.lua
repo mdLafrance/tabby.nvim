@@ -38,7 +38,7 @@ end
 local function set_current_tab(window, idx)
     -- Infer window
     if not window then
-        window = vim.api.set_current_win()
+        window = vim.api.nvim_get_current_win()
     end
 
     if not window_has_tab_group(window) then
@@ -57,6 +57,10 @@ local function set_current_tab(window, idx)
     log.debug("Window %d switching to tab %d", window, tabs.index)
 
     local bufnr = tabs.buffers[tabs.index]
+
+    if not bufnr then
+        return
+    end
 
     -- Setting the buffer triggers an autocommand that will apply changed tab behaviors.
     -- See `register_tab_callbacks` for details.
@@ -305,22 +309,19 @@ M.browse_and_open_as_tab = function()
     local buf = vim.api.nvim_get_current_buf()
 
     telescope_pick_file(function(file)
-        local new_buf = buffers.get_buffer_for_file(file)
-        local do_add_buffer = true
+        local window_is_writable = compat.get_buf_type(buf) == ""
 
-        if not window_has_tab_group(window) then
-            -- If this is called while the current window is not writable, open
-            -- a new window to use as the tab group
-            if compat.get_buf_type(buf) ~= "" then
-                window = vim.api.nvim_open_win(new_buf, true, { win = -1, split = 'right' })
-                do_add_buffer = false
+        if window_is_writable then
+            local tabs = g_tabs[window]
+
+            if tabs == nil then
+                convert_to_tab_group(window)
+                vim.cmd.edit(file)
             end
-
-            convert_to_tab_group(window)
-        end
-
-        if do_add_buffer then
-            add_buffer_to_tab_group(new_buf, window)
+        else
+            vim.cmd.edit(file)
+            local new_win = vim.api.nvim_get_current_win()
+            convert_to_tab_group(new_win)
         end
     end)
 end
