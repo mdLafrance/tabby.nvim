@@ -4,6 +4,7 @@ local buffers = require("tabby.buffers")
 local tabline = require("tabby.tabline")
 local log = require("tabby.log")
 local opts = require("tabby.config").opts
+local compat = require("tabby.compat")
 
 --- The global record of all currently managed tab groups.
 ---
@@ -309,7 +310,7 @@ M.browse_and_open_as_tab = function()
         if not window_has_tab_group(window) then
             -- If this is called while the current window is not writable, open
             -- a new window to use as the tab group
-            if vim.api.nvim_get_option_value("buftype", { buf = buf }) ~= "" then
+            if compat.get_buf_type(buf) ~= "" then
                 window = vim.api.nvim_open_win(new_buf, true, { win = -1, split = 'right' })
             end
 

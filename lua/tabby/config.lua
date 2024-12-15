@@ -1,8 +1,6 @@
 --- Configuration options for tabby.
----
 --- Apply configuration options with the exported `setup` function.
----
----@class TABBY_CONFIG
+---@class TabbyConfig
 ---@field always_convert_to_tab_group boolean If enabled, any new writable buffer that is opened will automatically be converted into a tab group.
 ---@field debug boolean Whether or not to enable debug trace logging.
 ---@field supress_notifications boolean Whether or not to suppress popup notifications. These will be warning messages fired when attempting to perform invalid operations.
@@ -19,6 +17,8 @@ local M      = {}
 
 M.opts       = TABBY_CONFIG
 
+--- Apply the given configuration options
+--- @param opts TabbyConfig
 M.setup      = function(opts)
     -- Register callbacks
     require("tabby.tabline").register_refresh_tabline_callback()

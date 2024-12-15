@@ -1,3 +1,5 @@
+-- Functionality to define and expose user commands
+
 local log = require("tabby.log")
 local core = require("tabby.core")
 
@@ -52,6 +54,8 @@ local commands = {
     show_tabs = core.debug_print_tabs,
 }
 
+--- Register user commands.
+--- Call only once in setup.
 M.register_commands = function()
     log.debug("Registering commands")
 

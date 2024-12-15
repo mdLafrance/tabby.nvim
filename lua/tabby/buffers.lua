@@ -2,6 +2,9 @@
 
 local log = require("tabby.log")
 
+--- Get an existing buffer for the given filepath, if one exists.
+--- @param file string File path a buffer might exist for
+--- @return number|nil bufnr
 local function try_get_existing_buffer(file)
     local buffers = vim.api.nvim_list_bufs()
     for _, buf in ipairs(buffers) do
@@ -16,7 +19,15 @@ local function try_get_existing_buffer(file)
     return nil
 end
 
-local function get_buffer_for_file(file_path)
+
+-- Exports
+local M = {}
+
+--- Get a buffer for the given text file.
+--- If a buffer for the given file exists, it is returned. Otherwise a new buffer is created.
+--- @param file_path string File path to open
+--- @return number bufnr
+M.get_buffer_for_file = function(file_path)
     log.debug("Obtaining buffer for file %s", file_path)
 
     -- A buffer of the same file_path is open, use that
@@ -44,10 +55,5 @@ local function get_buffer_for_file(file_path)
 
     return buf
 end
-
--- Exports
-local M = {}
-
-M.get_buffer_for_file = get_buffer_for_file
 
 return M

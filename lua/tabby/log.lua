@@ -1,3 +1,5 @@
+--- Functionality for logging
+
 local opts = require("tabby.config").opts
 
 local M = {}

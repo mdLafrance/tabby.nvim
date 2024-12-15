@@ -1,10 +1,10 @@
 -- Functionality for creating the visual tab line indicator
-
 local devicons = require('nvim-web-devicons')
 
 local TabGroup = require("tabby.tab_group")
 local log = require("tabby.log")
 local opts = require("tabby.config").opts
+local compat = require("tabby.compat")
 
 ---@class Palette
 ---@field text string Color for normal text
@@ -15,10 +15,10 @@ local opts = require("tabby.config").opts
 local Palette = {}
 
 local function set_highlight_group_from_theme()
-    local n = vim.api.nvim_get_hl_by_name("Normal", true)
-    local p1 = vim.api.nvim_get_hl_by_name("TabLine", true)
-    local p2 = vim.api.nvim_get_hl_by_name("StatusLine", true)
-    local p3 = vim.api.nvim_get_hl_by_name("LineNr", true)
+    local n = compat.get_highlight_group("Normal")
+    local p1 = compat.get_highlight_group("TabLine")
+    local p2 = compat.get_highlight_group("StatusLine")
+    local p3 = compat.get_highlight_group("LineNr")
 
     local text = n.fg or n.foreground or nil
     local text_muted = p3.fg or p3.foreground or nil
