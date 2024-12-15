@@ -9,9 +9,9 @@ local M = {}
 --- @return string|nil buftype
 M.get_buf_type = function(bufnr)
     if version.major == 0 and version.minor < 10 then
-        return vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+        return vim.api.nvim_get_option_value("buftype", { buf = bufnr }) or ""
     else
-        return vim.api.nvim_buf_get_option(bufnr, "filetype") ---@diagnostic disable-line: deprecated
+        return vim.api.nvim_buf_get_option(bufnr, "buftype") or "" ---@diagnostic disable-line: deprecated
     end
 end
 

@@ -16,7 +16,7 @@ local function print_buf_info()
     local buf_type = vim.api.nvim_get_option_value("buftype", { buf = buf })
     local filename = vim.api.nvim_get_option_value("filetype", { buf = buf })
 
-    print(string.format("buffer %d - %s - %s - %s", buf, buf_name, buf_type, filename))
+    print(string.format("buf/name/type/filetype %d - %s - %s - %s", buf, buf_name, buf_type, filename))
 end
 
 vim.keymap.set("n", "<leader>cl", core.close_tab, {})

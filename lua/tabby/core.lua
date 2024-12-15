@@ -306,18 +306,22 @@ M.browse_and_open_as_tab = function()
 
     telescope_pick_file(function(file)
         local new_buf = buffers.get_buffer_for_file(file)
+        local do_add_buffer = true
 
         if not window_has_tab_group(window) then
             -- If this is called while the current window is not writable, open
             -- a new window to use as the tab group
             if compat.get_buf_type(buf) ~= "" then
                 window = vim.api.nvim_open_win(new_buf, true, { win = -1, split = 'right' })
+                do_add_buffer = false
             end
 
             convert_to_tab_group(window)
         end
 
-        add_buffer_to_tab_group(new_buf, window)
+        if do_add_buffer then
+            add_buffer_to_tab_group(new_buf, window)
+        end
     end)
 end
 
