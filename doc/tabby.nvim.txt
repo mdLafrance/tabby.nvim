@@ -1,0 +1,47 @@
+*tabby.nvim.txt*    Tabs-in-windows
+
+==============================================================================
+							      *TabbyContents*
+CONTENTS
+
+    1. About ....................... |TabbyAbout|
+    2. Usage ....................... |TabbyUsage|
+    3. Commands .................... |TabbyCommands|
+    4. Configuration ............... |TabbyConfiguration|
+
+==============================================================================
+								 *TabbyAbout*
+1. About 
+
+Tabby brings ide-like tabs to neovim. Specifically, tabby allows you to have 
+tab based organization on each window. 
+
+This differs from standard vim tabs, in which a tab is a top level construct
+that holds windows. There is no standard way to have windows persist while 
+switching between tabs - a tab holds the entire screen worth of windows.
+
+Tabby lets you use tabs like you might be used to from a regular ide, and
+allows you to maintain sidebar windows like file trees or outliners while
+organizing tabs on your windows.
+
+It also adds some features you might be used to from other visual editors,
+like mouse support, and clickable close functionality.
+
+
+==============================================================================
+								 *TabbyUsage*
+2. Usage 
+
+Tabby 
+
+==============================================================================
+							      *TabbyCommands*
+3. Commands
+
+==============================================================================
+							 *TabbyConfiguration*
+4. Configuration
+
+
+
+vim:tw=78:ts=8:noet:ft=help:norl:
