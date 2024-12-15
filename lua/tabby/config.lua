@@ -19,6 +19,14 @@ M.opts       = TABBY_CONFIG
 --- Apply the given configuration options
 --- @param opts TabbyConfig
 M.setup      = function(opts)
+    -- Check minimum version
+    local version = vim.version()
+
+    if version.major < 1 and version.minor < 8 then
+        error("Tabby requires neovim version 0.8 or greater")
+        return
+    end
+
     -- Register callbacks
     require("tabby.tabline").register_refresh_tabline_callback()
     require("tabby.tabline").register_refresh_highlight_groups_callback()

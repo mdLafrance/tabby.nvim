@@ -2,13 +2,13 @@ local core = require("tabby.core")
 
 local M = {}
 
-vim.keymap.set("n", "<leader>nt", ":Tabby new_tab<CR>", {})
-vim.keymap.set("n", "<leader>mt", ":Tabby convert_to_tab_group<CR>", {})
-vim.keymap.set("n", "<leader>cl", ":Tabby close_tab<CR>", {})
-vim.keymap.set("n", "<leader>tdr", ":Tabby detach right<CR>", {})
-vim.keymap.set("n", "<leader>tdd", ":Tabby detach below<CR>", {})
-vim.keymap.set("n", "<leader>[", ":Tabby previous_tab<CR>", {})
-vim.keymap.set("n", "<leader>]", ":Tabby next_tab<CR>", {})
+vim.keymap.set("n", "<leader>nt", ":TabbyNewTab<CR>", {})
+vim.keymap.set("n", "<leader>mt", ":TabbyConvertToTabGroup<CR>", {})
+vim.keymap.set("n", "<leader>cl", ":TabbyCloseTab<CR>", {})
+vim.keymap.set("n", "<leader>tdr", ":TabbyDetach right<CR>", {})
+vim.keymap.set("n", "<leader>tdd", ":TabbyDetach below<CR>", {})
+vim.keymap.set("n", "<leader>[", ":TabbyPreviousTab<CR>", {})
+vim.keymap.set("n", "<leader>]", ":TabbyNextTab<CR>", {})
 
 local function print_buf_info()
     local buf = vim.api.nvim_get_current_buf()

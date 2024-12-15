@@ -1,46 +1,67 @@
-*tabby.nvim.txt*    Tabs-in-windows
+*tabby.nvim.txt*                                       Tabs like a regular IDE
 
 ==============================================================================
-							      *TabbyContents*
+						     *tabby.table-of-contents*
 CONTENTS
 
-    1. About ....................... |TabbyAbout|
-    2. Usage ....................... |TabbyUsage|
-    3. Commands .................... |TabbyCommands|
-    4. Configuration ............... |TabbyConfiguration|
+    1. ABOUT ....................... |tabby.about|
+    2. USAGE ....................... |tabby.usage|
+    3. COMMANDS .................... |tabby.commands|
+    4. CONFIGURATION ............... |tabby.configuration|
+    5. TIPS AND TRICKS ............. |tabby.tips-and-tricks|
+    6. CHANGELOG ................... |tabby.changelog|
 
 ==============================================================================
-								 *TabbyAbout*
-1. About 
+								 *tabby.about*
+1. ABOUT 
 
-Tabby brings ide-like tabs to neovim. Specifically, tabby allows you to have 
-tab based organization on each window. 
+Tabby brings ide-like tabs to neovim. Typically, in a visual editor, you 
+have panes open each with their own tabs, as well as side content like file
+explorers or debuggers. Vim has a different concept of tabs, in which one tab
+contains the entire screen worth of windows (including any side content which
+are themselves just windows into special buffers).
 
-This differs from standard vim tabs, in which a tab is a top level construct
-that holds windows. There is no standard way to have windows persist while 
-switching between tabs - a tab holds the entire screen worth of windows.
+Tabby lets you open virtual tab groups on top of your windows themselves, so
+you can keep your side content open while flipping between tabs. You can even
+have two windows with tab groups open side by side (or as many as you want).
 
-Tabby lets you use tabs like you might be used to from a regular ide, and
-allows you to maintain sidebar windows like file trees or outliners while
-organizing tabs on your windows.
+Tab groups created by tabby also support some features you might be used to 
+from other visual editors, like mouse support, and clickable close 
+functionality.
 
-It also adds some features you might be used to from other visual editors,
-like mouse support, and clickable close functionality.
+==============================================================================
+								 *tabby.usage*
+2. USAGE 
+
+Tabby operates on the concept of "tab groups". A window can be marked as a 
+tab group, and then tabs can be opened on that window. 
+
+Behind the scenes, tabby is associating a small data structure with that
+window id, and swaps out the buffer on that window based on your commands.
+
+Interaction with tabby is exposed with a collection of user commands detailed
+below in |tabby.commands|, which should cover almost all use cases. If you 
+are looking to implement more advanced functionality, the api is well
+documented in the core module.
+
+==============================================================================
+							      *tabby.commands*
+3. COMMANDS
+
+*:Tabby*
+
+    All user commands are exposed as subcommands of the main |:Tabby| command.
+
+    *help*
+
+        Opens the help file for tabby.
+
+
 
 
 ==============================================================================
-								 *TabbyUsage*
-2. Usage 
-
-Tabby 
-
-==============================================================================
-							      *TabbyCommands*
-3. Commands
-
-==============================================================================
-							 *TabbyConfiguration*
-4. Configuration
+							 *tabby.configuration*
+4. CONFIGURATION
 
 
 

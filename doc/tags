@@ -1,6 +1,8 @@
-TabbyContents	tabby.nvim.txt	/*TabbyContents*
-TabbyUsage	tabby.nvim.txt	/*TabbyUsage*
-tabby-about	tabby.nvim.txt	/*tabby-about*
+:Tabby	tabby.nvim.txt	/*:Tabby*
+help	tabby.nvim.txt	/*help*
+tabby.about	tabby.nvim.txt	/*tabby.about*
 tabby.commands	tabby.nvim.txt	/*tabby.commands*
 tabby.configuration	tabby.nvim.txt	/*tabby.configuration*
 tabby.nvim.txt	tabby.nvim.txt	/*tabby.nvim.txt*
+tabby.table-of-contents	tabby.nvim.txt	/*tabby.table-of-contents*
+tabby.usage	tabby.nvim.txt	/*tabby.usage*
