@@ -43,6 +43,17 @@ See the [help doc](./doc/tabby.nvim.txt) for usage details.
   
 </details>
 
+<details open>
+  <summary>
+    Multiple tab groups
+  </summary>
+
+![image](https://github.com/user-attachments/assets/e79810db-6ce2-473a-a135-d1d938215c3f)
+
+  
+</details>
+
+
 ## Installation
 ### Lazy
 ```lua
