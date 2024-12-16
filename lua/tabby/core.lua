@@ -316,8 +316,9 @@ M.browse_and_open_as_tab = function()
 
             if tabs == nil then
                 convert_to_tab_group(window)
-                vim.cmd.edit(file)
             end
+
+            vim.cmd.edit(file)
         else
             vim.cmd.edit(file)
             local new_win = vim.api.nvim_get_current_win()
