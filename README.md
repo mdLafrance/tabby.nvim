@@ -56,10 +56,16 @@ Tabby's setup function accepts the following table:
 
 ```lua
 require("tabby").setup({
+    -- If a tab group has only one tab, automatically convert back into a regular buffer window
     remove_tab_group_if_only_tab = true,
+
+    -- Show filetype icons for tabs
     show_icon_in_tab_bar = true,
-    show_close_all_button_in_tab_bar = true,
+
+    -- Enable debug logging
     debug = false,
+
+    -- Suppress notifications from tabby. These are fired when encountering unexpected behavior
     suppress_notifications = false,
 })
 ```
@@ -70,4 +76,4 @@ Tabby uses the `winbar`, and will conflict with other plugins that do so as well
 neovim >= 0.8 is required.
 
 ## Help
-Tabby has a detailed [help doc](./doc/tabby.nvim.txt), access it from within neovim with `:help tabby` for explanations on the plugin, and commands.
+Tabby has a detailed [help doc](./doc/tabby.nvim.txt). Access it from within neovim with `:help tabby` for explanations on the plugin, and commands.
