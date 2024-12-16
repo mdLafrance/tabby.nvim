@@ -28,18 +28,40 @@ have two windows with different tab groups open side by side (or as many as you 
 
 Tab groups created by tabby also support some features you might be used to 
 from other visual editors, like mouse support. 
-functionality.
+
+See the [help doc](./doc/tabby.nvim.txt) for usage details.
 
 ## Examples
-> TODO
+<details open>
+  <summary>
+    Screenshot
+  </summary>
+
+![image](https://github.com/user-attachments/assets/3e173d90-90e6-4dbc-aaa3-57493248d2d7)
+
+  
+</details>
 
 ## Installation
-#### Lazy
+### Lazy
 ```lua
 return {
   "mdlafrance/tabby.nvim",
   opts = {}
 }
+```
+
+### Configuration
+Tabby's setup function accepts the following table:
+
+```lua
+require("tabby").setup({
+    remove_tab_group_if_only_tab = true,
+    show_icon_in_tab_bar = true,
+    show_close_all_button_in_tab_bar = true,
+    debug = false,
+    suppress_notifications = false,
+})
 ```
 
 ## Requirements
@@ -48,4 +70,4 @@ Tabby uses the `winbar`, and will conflict with other plugins that do so as well
 neovim >= 0.8 is required.
 
 ## Help
-Tabby has a detailed help doc, access it from within neovim with `:help tabby` for explanations on the plugin, and commands.
+Tabby has a detailed [help doc](./doc/tabby.nvim.txt), access it from within neovim with `:help tabby` for explanations on the plugin, and commands.
