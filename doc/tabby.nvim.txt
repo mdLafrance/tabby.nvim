@@ -160,7 +160,7 @@ manager of choice.
 	show_icon_in_tab_bar = true,
 	show_close_all_button_in_tab_bar = true,
 	debug = false,
-	supress_notifications = false,
+	suppress_notifications = false,
     })
 <
 
@@ -186,7 +186,7 @@ manager of choice.
     If true, then enables debug logging.
 
 
-`supress_notifications` (default: false)
+`suppress_notifications` (default: false)
 
     If true, then no notifications are shown when a tab is closed.
     Notifications are triggered to warn the user of unsupported behavior.

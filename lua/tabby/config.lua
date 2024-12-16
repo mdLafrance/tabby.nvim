@@ -1,15 +1,12 @@
 --- Configuration options for tabby.
 --- Apply configuration options with the exported `setup` function.
 ---@class TabbyConfig
----@field always_convert_to_tab_group boolean If enabled, any new writable buffer that is opened will automatically be converted into a tab group.
----@field debug boolean Whether or not to enable debug trace logging.
----@field supress_notifications boolean Whether or not to suppress popup notifications. These will be warning messages fired when attempting to perform invalid operations.
 TABBY_CONFIG = {
     remove_tab_group_if_only_tab = true,
     show_icon_in_tab_bar = true,
     show_close_all_button_in_tab_bar = true,
     debug = false,
-    supress_notifications = false,
+    suppress_notifications = false,
 }
 
 local M      = {}

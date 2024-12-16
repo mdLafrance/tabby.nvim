@@ -15,13 +15,13 @@ M.error = function(fmt, ...)
 end
 
 M.notify_info = function(fmt, ...)
-    if not opts.supress_notifications then
+    if not opts.suppress_notifications then
         vim.notify(string.format(fmt, ...), vim.log.levels.INFO)
     end
 end
 
 M.notify_warning = function(fmt, ...)
-    if not opts.supress_notifications then
+    if not opts.suppress_notifications then
         vim.notify(string.format(fmt, ...), vim.log.levels.WARN)
     end
 end
