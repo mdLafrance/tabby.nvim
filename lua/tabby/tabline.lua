@@ -1,5 +1,4 @@
 -- Functionality for creating the visual tab line indicator
-local devicons = require('nvim-web-devicons')
 
 local TabGroup = require("tabby.tab_group")
 local log = require("tabby.log")
@@ -77,7 +76,7 @@ local function format_buffer_tab(bufnr, idx, is_active)
     if opts.show_icon_in_tab_bar then
         local hlg
 
-        icon, hlg = devicons.get_icon(filename, ext)
+        icon, hlg = require('nvim-web-devicons').get_icon(filename, ext)
 
         icon = icon or ""
         hlg = hlg or ""
