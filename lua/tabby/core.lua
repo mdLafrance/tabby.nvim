@@ -1,6 +1,5 @@
 -- Core functionality
 
-local buffers = require("tabby.buffers")
 local tabline = require("tabby.tabline")
 local log = require("tabby.log")
 local opts = require("tabby.config").opts
