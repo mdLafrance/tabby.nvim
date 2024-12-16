@@ -9,9 +9,9 @@ CONTENTS
     3. REQUIREMENTS ................ |tabby.requirements|
     4. COMMANDS .................... |tabby.commands|
     5. CONFIGURATION ............... |tabby.configuration|
+	5.1 OPTIONS ................ |tabby.configuration.options|
+	5.1 LAZY ................... |tabby.configuration.lazy|
     6. TIPS AND TRICKS ............. |tabby.tips-and-tricks|
-    7. CHANGELOG ................... |tabby.changelog|
-
 
 ==============================================================================
 								 *tabby.about*
@@ -24,8 +24,8 @@ contains the entire screen worth of windows (including any side content which
 are themselves just windows into special buffers).
 
 Tabby lets you open virtual tab groups on top of your windows themselves, so
-you can keep your side content open while flipping between tabs. You can even
-have two windows with tab groups open side by side (or as many as you want).
+you can keep your side content open while flipping between buffers. You can even
+have two windows with different tab groups open side by side (or as many as you want).
 
 Tab groups created by tabby also support some features you might be used to 
 from other visual editors, like mouse support, and clickable close 
@@ -36,17 +36,21 @@ functionality.
 2. USAGE 
 
 Tabby operates on the concept of "tab groups". A window can be marked as a 
-tab group, and then tabs can be opened on that window. 
-
-Behind the scenes, tabby is associating a small data structure with that
-window id, and swaps out the buffer on that window based on your commands.
+tab group, and then tabs can be opened on that window. You'll know that a
+window is a tab group when you can see the tab bar displayed. 
 
 Interaction with tabby is exposed with a collection of user commands detailed
-below in |tabby.commands|, which should cover almost all use cases. If you 
-are looking to implement more advanced functionality, the api is well
+below in |tabby.commands|. See |tabby.tips-and-tricks| for some suggested
+workflows and keybinds.
+
+Behind the scenes, tabby is associating a small data structure with that
+window id, and swapping out the visible buffer on that window based on your commands.
+
+If you are looking to implement more advanced functionality, the api is well
 documented in the core module.
-
-
+>
+    require("tabby.core").set_current_tab(0, 2)
+<
 ==============================================================================
 							  *tabby.requirements*
 3. REQUIREMENTS
@@ -62,11 +66,11 @@ incompatible with any plugins that also want to use the |winbar|.
 
   See the |tabby.configuration| section for examples on how to configure these plugins.
 
-
 ==============================================================================
 							      *tabby.commands*
 3. COMMANDS
 
+Tabby exposes the following user commands:
 
 *:TabbyHelp*
     
@@ -76,10 +80,10 @@ incompatible with any plugins that also want to use the |winbar|.
 *:TabbyNewTab*
 
     Opens a telescope picker to browse for a file to open as a new tab.
-    If the current window isn't a tab group, it is first converted into one.
+    If the current window isn't a tab group, it is converted into one.
 
-    If the current window is not writable (for example some kind of utility
-    buffer), then a new window is opened as a tab group.
+    If the current window is not writable, then a new window is opened with a tab 
+    group.
 
 
 *:TabbyCloseTab*
@@ -130,11 +134,51 @@ incompatible with any plugins that also want to use the |winbar|.
     Prints information about all currently registered tab groups. For
     debugging purposes.
 
-
 ==============================================================================
 							 *tabby.configuration*
-4. CONFIGURATION
+5. CONFIGURATION
 
+Tabby must be initialized by calling the *tabby.setup()* function. Caling this
+function registers necessary autocommands and user commands. At what point you
+call setup depends on your neovim plugin manager of choice.
 
+-----------------------------------------------------------------------------
+						    *tabby.configuration.options*
+5.1 OPTIONS
+
+Tabby accepts a table to its setup function with the following shape:
+>
+    {
+	remove_tab_group_if_only_tab = true,
+	show_icon_in_tab_bar = true,
+	show_close_all_button_in_tab_bar = true,
+	debug = false,
+	supress_notifications = false,
+    }
+<
+
+-----------------------------------------------------------------------------
+						    *tabby.configuration.lazy*
+5.2 LAZY
+
+If using Lazy.nvim, the following snippet is enough to enable Tabby:
+>
+    return {
+	"mdlafrance/tabby.nvim",
+	opts = {}
+    }
+<
+or
+>
+    return {
+	"mdlafrance/tabby.nvim",
+	config = function()
+	    require("tabby").setup()
+	end
+    }
+
+It's important to either define a *config()* function which calls Tabby's
+setup function, or to provide opts so that lazy will call the setup function
+itself.
 
 vim:tw=78:ts=8:noet:ft=help:norl:
