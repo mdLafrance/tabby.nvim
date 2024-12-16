@@ -1,19 +1,20 @@
 <h1 align=center>
   <img src="https://github.com/user-attachments/assets/e5005f94-1c42-4bc3-97a9-6d57ef77b710" width="30" height="30" style="vertical-align: bottom" />
  tabby.nvim
+  <img src="https://img.shields.io/badge/beta-4287f5" />
+
 </h1>
 
 <p align="center" size=10>
   Neovim tabs like a regular IDE 
 </p>
 
-<p align="center">
-    <sup>(Still in beta)</sup> <!-- x-release-please-version -->
-</p>
 
 <p align="center">
     <code>:help tabby</code>
 </p>
+
+<br />
 
 ## About 
 Tabby brings ide-like tabs to neovim. Typically, in a visual editor, you 
