@@ -3,7 +3,7 @@
 Author: Max Lafrance <github.com/mdlafrance>
 
 ==============================================================================
-						     *tabby*
+								       *tabby*
 CONTENTS
 
     1. ABOUT ....................... |tabby-about|
