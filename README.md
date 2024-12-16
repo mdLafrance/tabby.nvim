@@ -4,7 +4,7 @@
 </h1>
 
 <p align="center" size=10>
-  Support for IDE-like tabs in Neovim. 
+  Neovim tabs like a regular IDE 
 </p>
 
 <p align="center">
