@@ -54,6 +54,20 @@ local commands = {
         core.detach_tab(nil, nil, direction)
     end,
 
+    merge = function(direction)
+        local directions = { left = true, right = true, up = true, down = true }
+
+        if not directions[direction] then
+            log.notify_warning("Invalid direction to merge: %s\nValid directions are up, down, left, right",
+                vim.inspect(direction))
+            return
+        end
+
+        if not pcall(require("tabby.merge").merge_tabs, nil, direction) then
+            log.notify_warning("TABBY: Unable to merge %s", direction)
+        end
+    end,
+
     show_tabs = core.debug_print_tabs,
 }
 

@@ -135,6 +135,21 @@ Tabby exposes the following user commands:
 	:TabbyDetach right
 
 
+*:TabbyMerge* {direction}
+
+    "Merges" the current tab or tab group into the closest window or tabgroup
+    in the given direction. If the target window is not a tab group, it is
+    first converted into one.
+
+    Arguments:
+	{direction} The direction to merge in. Valid values are "up", "down",
+	"left", "right".
+
+    Examples:
+    >
+	:TabbyMerge right
+
+
 *:TabbyShowTabs*
 
     Prints information about all currently registered tab groups. For
@@ -235,6 +250,9 @@ Defining some keymaps can be usefule for quickly managing tabs. For example:
 
     vim.keymap.set("n", "<leader>tdr", ":TabbyDetach right<CR>", {})
     vim.keymap.set("n", "<leader>tdd", ":TabbyDetach below<CR>", {})
+
+    vim.keymap.set("n", "<leader>tmr", ":TabbyMerge right<CR>", {})
+    vim.keymap.set("n", "<leader>tml", ":TabbyMerge left<CR>", {})
 
 
 

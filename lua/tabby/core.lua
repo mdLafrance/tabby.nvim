@@ -5,6 +5,7 @@ local log = require("tabby.log")
 local opts = require("tabby.config").opts
 local compat = require("tabby.compat")
 
+
 --- The global record of all currently managed tab groups.
 ---
 --- Interaction with this object should be done behind an interface.
@@ -144,6 +145,7 @@ local function convert_to_tab_group(window)
     create_tab_group(window)
     add_buffer_to_tab_group(buf, window)
 end
+
 
 --- Change the tab of the given tab group by the given offset.
 ---
@@ -292,12 +294,15 @@ end
 -- Exports --
 local M = {}
 
+M.window_has_tab_group = window_has_tab_group
+M.add_buffer_to_tab_group = add_buffer_to_tab_group
 M.set_current_tab = set_current_tab
 M.convert_to_tab_group = convert_to_tab_group
 M.change_tab_offset = change_tab_offset
 M.close_tab = close_tab
 M.detach_tab = detach_tab
 M.close_all_tabs = close_all_tabs
+
 
 --- Opens a telescope picker to browse for a file to open as a new tab.
 ---
