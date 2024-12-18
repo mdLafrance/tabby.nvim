@@ -443,6 +443,25 @@ M.register_tab_callbacks = function()
     })
 end
 
+M.close_other_tabs = function(window)
+    if window == nil then
+        window = vim.api.nvim_get_current_win()
+    end
+
+    local tabs = g_tabs[window]
+
+    if not tabs then
+        error(string.format("Cannot close other tabs on window with no tab group %d", window))
+    end
+
+    local current_buf = tabs.buffers[tabs.index]
+
+    tabs.buffers = { current_buf }
+    tabs.index = 1
+
+    tabline.redraw_tabline(tabs)
+end
+
 -- Debug utils
 
 --- Utility function that prints information about currently active tab groups

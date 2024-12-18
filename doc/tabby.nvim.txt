@@ -97,6 +97,11 @@ Tabby exposes the following user commands:
     Closes the current tab in the current tab group.
 
 
+*:TabbyCloseOtherTabs*
+
+    Closes all tabs except the current one on the current tab group.
+
+
 *:TabbyConvertToTabGroup*
 
     Converts the current window into a tab group with the current buffer set

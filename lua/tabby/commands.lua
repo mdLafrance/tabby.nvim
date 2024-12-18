@@ -38,6 +38,10 @@ local commands = {
         core.close_tab(nil, nil)
     end,
 
+    close_other_tabs = function()
+        core.close_other_tabs(nil)
+    end,
+
     close_all = function()
         core.close_all_tabs(nil)
     end,
