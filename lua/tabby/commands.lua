@@ -15,6 +15,8 @@ local commands = {
 
     convert_to_tab_group = core.convert_to_tab_group,
 
+    remove_tab_group = core.remove_tab_group,
+
     next_tab = function()
         core.change_tab_offset(nil, 1)
     end,

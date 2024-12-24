@@ -291,6 +291,37 @@ local function detach_tab(window, idx, direction)
     close_tab(window, idx)
 end
 
+local function close_other_tabs(window)
+    if window == nil then
+        window = vim.api.nvim_get_current_win()
+    end
+
+    local tabs = g_tabs[window]
+
+    if not tabs then
+        error(string.format("Cannot close other tabs on window with no tab group %d", window))
+    end
+
+    local current_buf = tabs.buffers[tabs.index]
+
+    tabs.buffers = { current_buf }
+    tabs.index = 1
+
+    tabline.redraw_tabline(tabs)
+end
+
+local function remove_tab_group(window)
+    if not window then
+        window = vim.api.nvim_get_current_win()
+    end
+
+    close_other_tabs(window)
+
+    g_tabs[window] = nil
+
+    tabline.clear_tabline_for_window(window)
+end
+
 -- Exports --
 local M = {}
 
@@ -302,7 +333,8 @@ M.change_tab_offset = change_tab_offset
 M.close_tab = close_tab
 M.detach_tab = detach_tab
 M.close_all_tabs = close_all_tabs
-
+M.close_other_tabs = close_other_tabs
+M.remove_tab_group = remove_tab_group
 
 --- Opens a telescope picker to browse for a file to open as a new tab.
 ---
@@ -441,25 +473,6 @@ M.register_tab_callbacks = function()
             end
         end
     })
-end
-
-M.close_other_tabs = function(window)
-    if window == nil then
-        window = vim.api.nvim_get_current_win()
-    end
-
-    local tabs = g_tabs[window]
-
-    if not tabs then
-        error(string.format("Cannot close other tabs on window with no tab group %d", window))
-    end
-
-    local current_buf = tabs.buffers[tabs.index]
-
-    tabs.buffers = { current_buf }
-    tabs.index = 1
-
-    tabline.redraw_tabline(tabs)
 end
 
 -- Debug utils
